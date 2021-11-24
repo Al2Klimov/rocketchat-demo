@@ -1,0 +1,22 @@
+---
+version: '3'
+services:
+   mongo:
+      image: mongo:4.0
+      command:
+         - --smallfiles
+         - --replSet
+         - rs0
+         - --oplogSize
+         - '128'
+      volumes:
+         - ./mongo-init.d:/docker-entrypoint-initdb.d:ro
+         - ./mongo-data:/data/db
+   rc:
+      image: rocket.chat:4
+      ports:
+         - 3000:3000
+      environment:
+         ROOT_URL: http://localhost:3000
+         MONGO_URL: mongodb://mongo/rc
+         MONGO_OPLOG_URL: mongodb://mongo:27017/local
